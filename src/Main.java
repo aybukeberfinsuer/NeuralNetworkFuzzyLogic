@@ -1,20 +1,21 @@
 import org.neuroph.core.data.DataSet;
+
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        scanner.useLocale(Locale.US); // Ondalık ayraç olarak nokta kullanımı için
+        scanner.useLocale(Locale.US);
 
-        DataSet trainingSet = null; // Eğitim veri seti
-        DataSet testSet = null;     // Test veri seti
+        DataSet trainingSet = null;
+        DataSet testSet = null;
 
-        // Veri yükleme
         try {
             System.out.println("Veri seti yükleniyor...");
-            DataSet[] data = DataLoader.loadAndSplitData("salary_data.csv", 0.75); // %75 eğitim, %25 test
+            DataSet[] data = DataLoader.loadAndSplitData("salary_data.csv", 0.75);
             trainingSet = data[0];
             testSet = data[1];
             System.out.println("Veri seti başarıyla yüklendi!");
@@ -24,63 +25,94 @@ public class Main {
         }
 
         NeuralNetworkProcess nnProcess = new NeuralNetworkProcess(trainingSet, testSet);
+        nnProcess.findBestTopologies();
+        int[] bestMomentumTopology = nnProcess.getBestMomentumTopology();
+        int[] bestNonMomentumTopology = nnProcess.getBestNonMomentumTopology();
 
-        // Ana Menü
         while (true) {
-            System.out.println("\n==== Ana Menu ====");
-            System.out.println("1- Agi Egit ve Test Et (Momentumlu)");
-            System.out.println("2- Agi Egit ve Test Et (Momentumsuz)");
-            System.out.println("3- Agi Egit Epoch Goster");
-            System.out.println("4- Agi Egit ve Tekli Test (Momentumlu)");
-            System.out.println("5- K-Fold Test ve Agi Egit ve Test Et (Momentumlu)");
-            System.out.println("0- Cikis");
-            System.out.print("Seciminizi yapin: ");
+            try {
+                displayMenu();
+                int choice = scanner.nextInt();
 
-            // Kullanıcı girişini güvenli hale getir
-            int choice;
-            if (scanner.hasNextInt()) {
-                choice = scanner.nextInt();
-            } else {
-                System.out.println("Gecersiz giris, lutfen bir sayi girin.");
-                scanner.next(); // Geçersiz girdiyi temizle
-                continue;
-            }
+                switch (choice) {
+                    case 1:
+                        trainAndTestWithMomentum(nnProcess, bestMomentumTopology);
+                        break;
 
-            switch (choice) {
-                case 1:
-                    System.out.println("\nMomentumlu egitim ve test basliyor...");
-                    nnProcess.trainNetwork(true); // Momentumlu eğitim
-                    break;
+                    case 2:
+                        trainAndTestWithoutMomentum(nnProcess, bestNonMomentumTopology);
+                        break;
 
-                case 2:
-                    System.out.println("\nMomentumsuz egitim ve test basliyor...");
-                    nnProcess.trainNetwork(false); // Momentumsuz eğitim
-                    break;
+                    case 3:
+                        trainWithEpochDisplay(nnProcess, bestMomentumTopology);
+                        break;
 
-                case 3:
-                    System.out.println("\nEpoch gosterimi ile egitim basliyor...");
-                   // nnProcess.trainNetworkWithEpochDisplay(scanner);  // Epoch gösterimi
-                    break;
+                    case 4:
+                        trainAndSingleTest(nnProcess, scanner);
+                        break;
 
-                case 4:
-                    System.out.println("\nKullanici parametreleri ile egitim basliyor...");
-                    nnProcess.trainNetworkWithUserParameters(scanner); // Kullanıcı girdisiyle eğitim
-                    break;
+                    case 5:
+                        performKFoldCrossValidation(nnProcess, scanner);
+                        break;
 
-                case 5:
-                    System.out.println("\nK-Fold Test basliyor...");
-                     nnProcess.kFoldCrossValidation(scanner); // K-Fold Test (Momentumlu)
-                   
-                    break;
+                    case 0:
+                        System.out.println("Programdan çıkılıyor...");
+                        scanner.close();
+                        return;
 
-                case 0:
-                    System.out.println("Programdan cikiliyor...");
-                    scanner.close();
-                    return;
-
-                default:
-                    System.out.println("Gecersiz secim, tekrar deneyin.");
+                    default:
+                        System.out.println("Geçersiz seçim, tekrar deneyin.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Hatalı giriş. Lütfen bir sayı girin.");
+                scanner.nextLine(); // Giriş akışını temizle
             }
         }
+    }
+
+    private static void displayMenu() {
+        System.out.println("\n==== Ana Menü ====");
+        System.out.println("1- Ağı Eğit ve Test Et (Momentumlu)");
+        System.out.println("2- Ağı Eğit ve Test Et (Momentumsuz)");
+        System.out.println("3- Ağı Eğit Epoch Göster");
+        System.out.println("4- Ağı Eğit ve Tekli Test (Momentumlu)");
+        System.out.println("5- K-Fold Test ve Ortalama Hata Hesapla");
+        System.out.println("0- Çıkış");
+        System.out.print("Seçiminizi yapın: ");
+    }
+
+    private static void trainAndTestWithMomentum(NeuralNetworkProcess nnProcess, int[] topology) {
+        System.out.println("\nMomentumlu eğitim ve test başlıyor...");
+        nnProcess.createNetwork(topology);
+        nnProcess.trainNetwork(true, 0.3, 0.9, 500);
+    }
+
+    private static void trainAndTestWithoutMomentum(NeuralNetworkProcess nnProcess, int[] topology) {
+        System.out.println("\nMomentumsuz eğitim ve test başlıyor...");
+        nnProcess.createNetwork(topology);
+        nnProcess.trainNetwork(false, 0.3, 0.0, 500);
+    }
+
+    private static void trainWithEpochDisplay(NeuralNetworkProcess nnProcess, int[] topology) {
+        System.out.println("\nEpoch gösterimli eğitim başlıyor...");
+        nnProcess.createNetwork(topology); // En iyi momentumlu topoloji ile başla
+        nnProcess.trainWithEpochDisplay(true);
+    }
+
+    private static void trainAndSingleTest(NeuralNetworkProcess nnProcess, Scanner scanner) {
+        System.out.println("\nAğı Eğit ve Tekli Test (Momentumlu) seçildi...");
+        nnProcess.trainAndSingleTest(true, scanner);
+    }
+
+    private static void performKFoldCrossValidation(NeuralNetworkProcess nnProcess, Scanner scanner) {
+        System.out.print("K değeri girin: ");
+        int k = scanner.nextInt();
+
+        if (k <= 1) {
+            System.out.println("Hatalı K değeri. Lütfen 1'den büyük bir değer girin.");
+            return;
+        }
+
+        nnProcess.performKFoldCrossValidation(k);
     }
 }
