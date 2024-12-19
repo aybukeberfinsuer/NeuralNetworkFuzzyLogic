@@ -1,16 +1,26 @@
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.data.DataSetRow;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.nnet.learning.MomentumBackpropagation;
 import org.neuroph.util.TransferFunctionType;
-
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Arrays;
 import java.util.Scanner;
+
+import javax.swing.JFrame;
 
 public class NeuralNetworkProcess {
     private DataSet trainingSet;
     private DataSet testSet;
     private MultiLayerPerceptron neuralNet;
+    
+    private Map<int[], Double> momentumResults = new LinkedHashMap<>();
+    private Map<int[], Double> nonMomentumResults = new LinkedHashMap<>();
 
     private int[] bestMomentumTopology;
     private int[] bestNonMomentumTopology;
@@ -88,12 +98,13 @@ public class NeuralNetworkProcess {
         double bestNonMomentumMSE = Double.MAX_VALUE;
 
         for (int[] topology : topologies) {
-            System.out.println("\nDeneme basliyor: Topoloji = " + Arrays.toString(topology));
+            System.out.println("\nDeneme başlıyor: Topoloji = " + Arrays.toString(topology));
 
-            // Momentumlu egitim
+            // Momentumlu eğitim
             createNetwork(topology);
             trainNetwork(true, 0.3, 0.9, 500);
             double momentumTestMSE = calculateMSE(testSet);
+            momentumResults.put(topology.clone(), momentumTestMSE);
             System.out.println("Momentumlu Test MSE: " + momentumTestMSE);
 
             if (momentumTestMSE < bestMomentumMSE) {
@@ -101,10 +112,11 @@ public class NeuralNetworkProcess {
                 bestMomentumTopology = topology;
             }
 
-            // Momentumsuz egitim
+            // Momentumsuz eğitim
             createNetwork(topology);
             trainNetwork(false, 0.3, 0.0, 500);
             double nonMomentumTestMSE = calculateMSE(testSet);
+            nonMomentumResults.put(topology.clone(), nonMomentumTestMSE);
             System.out.println("Momentumsuz Test MSE: " + nonMomentumTestMSE);
 
             if (nonMomentumTestMSE < bestNonMomentumMSE) {
@@ -112,6 +124,8 @@ public class NeuralNetworkProcess {
                 bestNonMomentumTopology = topology;
             }
         }
+        
+
 
         System.out.println("\nEn iyi momentumlu topoloji: " + Arrays.toString(bestMomentumTopology));
         System.out.println("Momentumlu en iyi Test MSE: " + bestMomentumMSE);
@@ -119,6 +133,32 @@ public class NeuralNetworkProcess {
         System.out.println("\nEn iyi momentumsuz topoloji: " + Arrays.toString(bestNonMomentumTopology));
         System.out.println("Momentumsuz en iyi Test MSE: " + bestNonMomentumMSE);
     }
+    public void plotResults() {
+	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+	    for (Map.Entry<int[], Double> entry : momentumResults.entrySet()) {
+	        String topology = Arrays.toString(entry.getKey());
+	        dataset.addValue(entry.getValue(), "Momentumlu", topology);
+	    }
+
+	    for (Map.Entry<int[], Double> entry : nonMomentumResults.entrySet()) {
+	        String topology = Arrays.toString(entry.getKey());
+	        dataset.addValue(entry.getValue(), "Momentumsuz", topology);
+	    }
+
+	    JFreeChart chart = ChartFactory.createLineChart(
+	        "Topoloji - Hata Grafiği",
+	        "Topoloji",
+	        "Hata (MSE)",
+	        dataset
+	    );
+
+	    JFrame frame = new JFrame("Grafik");
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    frame.add(new ChartPanel(chart));
+	    frame.pack();
+	    frame.setVisible(true);
+	}
 
     public int[] getBestMomentumTopology() {
         return bestMomentumTopology;

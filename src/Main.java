@@ -26,6 +26,7 @@ public class Main {
 
         NeuralNetworkProcess nnProcess = new NeuralNetworkProcess(trainingSet, testSet);
         nnProcess.findBestTopologies();
+        nnProcess.plotResults();
         int[] bestMomentumTopology = nnProcess.getBestMomentumTopology();
         int[] bestNonMomentumTopology = nnProcess.getBestNonMomentumTopology();
 
