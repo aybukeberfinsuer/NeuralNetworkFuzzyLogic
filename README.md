@@ -1,19 +1,39 @@
-<h5>Merhabalar, Bu Sakarya Üniversitesi Bulanık Mantık dersi 2.ödevidir.</h5>
+<h1>Sakarya University Fuzzy Logic - Assignment 2</h1>
+
+<p>This repository contains the implementation of the 2nd assignment for the Sakarya University Fuzzy Logic course. The project demonstrates the application of neural networks for solving a problem using Neuroph and JFreeChart libraries, alongside a custom dataset.</p>
+
+<h2>Key Features</h2>
 <ul>
-  <li>FuzzyLogic repository'sinden oluşan verilerele bir dataset hazırladım.(salary_data.csv dosyası) ->  DataLoader classında</li>
-   <li>Farklı topolojier deneyerek en uygun topolojiyi bularak projeme devam ettim.</li> 
-  <li> Momentumlu ve momentumsuz olarak eğitim yapıp test sonuçlarını çıkardım.</li>
-  <li>dist klasörü altına girip <code>java -jar program.jar</code>. şeklinde komut girdiğinizde çalışacaktır.</li>
-  <li>Bu projede Neuroph, JFreeChart kütüphaneleri uygulandı. Gerekli jar dosyalarına lib klasöründen erişebilirsiniz.</li>
-  <li>Proje detayı için doc dizinindeki raporu inceleyebilirsiniz</li>
+  <li><strong>Custom Dataset</strong>: The <code>salary_data.csv</code> file is prepared using data from the FuzzyLogic repository and loaded into the project via the <code>DataLoader</code> class.</li>
+  <li><strong>Topology Experimentation</strong>: Different neural network topologies were tested, and the best-performing topology was selected for further experiments.</li>
+  <li><strong>Momentum and Non-Momentum Training</strong>: The neural network was trained and tested with both momentum and non-momentum approaches to compare their performance.</li>
+  <li><strong>Execution</strong>: The compiled program can be run by navigating to the <code>dist</code> folder and executing the command <code>java -jar program.jar</code>.</li>
+  <li><strong>Libraries Used</strong>: 
+    <ul>
+      <li><strong>Neuroph</strong>: For creating and training neural networks.</li>
+      <li><strong>JFreeChart</strong>: For visualizing data and results.</li>
+    </ul>
+  </li>
+  <li><strong>Documentation</strong>: A detailed report about the project and its results is available in the <code>doc</code> directory.</li>
 </ul>
-<p>..........................................................................................</p>
-<h5>Hello, This is the 2nd assignment for the Sakarya University Fuzzy Logic course.</h5>
+
+<h2>How to Use</h2>
+<ol>
+  <li><strong>Run the Program</strong>:  
+    <ul>
+      <li>Navigate to the <code>dist</code> folder.</li>
+      <li>Execute the command: <code>java -jar program.jar</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Dependencies</strong>: All required <code>.jar</code> files are available in the <code>lib</code> folder. Ensure they are included in your classpath if needed.</li>
+</ol>
+
+<h2>Project Structure</h2>
 <ul>
-  <li>I prepared a dataset using the data from the FuzzyLogic repository (salary_data.csv file) -> In the DataLoader class.</li>
-  <li>I experimented with different topologies and proceeded with the most suitable one for my project.</li>
-  <li>I trained and tested the model with and without momentum, and obtained the results.</li>
-  <li>To run the program, navigate to the dist folder and execute the command: <code>java -jar program.jar</code>.</li>
-  <li>In this project, Neuroph and JFreeChart libraries were utilized. You can find the required jar files in the lib folder.</li>
-  <li>For more details about the project, please refer to the report in the doc directory.</li>
+  <li><strong>DataLoader Class</strong>: Handles dataset loading and preprocessing.</li>
+  <li><strong>lib</strong>: Contains all the necessary jar files for running the program.</li>
+  <li><strong>dist</strong>: Includes the compiled <code>.jar</code> file for execution.</li>
+  <li><strong>doc</strong>: Provides a detailed report on the project.</li>
 </ul>
+
+<p>Feel free to explore the code and documentation for further insights!</p>
