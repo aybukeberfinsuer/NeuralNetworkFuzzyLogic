@@ -98,7 +98,7 @@ public class NeuralNetworkProcess {
         double bestNonMomentumMSE = Double.MAX_VALUE;
 
         for (int[] topology : topologies) {
-            System.out.println("\nDeneme başlıyor: Topoloji = " + Arrays.toString(topology));
+            System.out.println("\nDeneme basliıyor: Topoloji = " + Arrays.toString(topology));
 
             // Momentumlu eğitim
             createNetwork(topology);

@@ -73,44 +73,44 @@ public class Main {
 
     private static void displayMenu() {
         System.out.println("\n==== Ana Menü ====");
-        System.out.println("1- Ağı Eğit ve Test Et (Momentumlu)");
-        System.out.println("2- Ağı Eğit ve Test Et (Momentumsuz)");
-        System.out.println("3- Ağı Eğit Epoch Göster");
-        System.out.println("4- Ağı Eğit ve Tekli Test (Momentumlu)");
+        System.out.println("1- Agi Egit ve Test Et (Momentumlu)");
+        System.out.println("2- Agi Egit ve Test Et (Momentumsuz)");
+        System.out.println("3- Agi Egit Epoch Goster");
+        System.out.println("4- Agi Egit ve Tekli Test (Momentumlu)");
         System.out.println("5- K-Fold Test ve Ortalama Hata Hesapla");
-        System.out.println("0- Çıkış");
-        System.out.print("Seçiminizi yapın: ");
+        System.out.println("0- Exit");
+        System.out.print("Seciminizi yapin: ");
     }
 
     private static void trainAndTestWithMomentum(NeuralNetworkProcess nnProcess, int[] topology) {
-        System.out.println("\nMomentumlu eğitim ve test başlıyor...");
+        System.out.println("\nMomentumlu egitim ve test basliyor...");
         nnProcess.createNetwork(topology);
         nnProcess.trainNetwork(true, 0.3, 0.9, 500);
     }
 
     private static void trainAndTestWithoutMomentum(NeuralNetworkProcess nnProcess, int[] topology) {
-        System.out.println("\nMomentumsuz eğitim ve test başlıyor...");
+        System.out.println("\nMomentumsuz egitim ve test basliyor...");
         nnProcess.createNetwork(topology);
         nnProcess.trainNetwork(false, 0.3, 0.0, 500);
     }
 
     private static void trainWithEpochDisplay(NeuralNetworkProcess nnProcess, int[] topology) {
-        System.out.println("\nEpoch gösterimli eğitim başlıyor...");
+        System.out.println("\nEpoch gösterimli egitim basliyor...");
         nnProcess.createNetwork(topology); // En iyi momentumlu topoloji ile başla
         nnProcess.trainWithEpochDisplay(true);
     }
 
     private static void trainAndSingleTest(NeuralNetworkProcess nnProcess, Scanner scanner) {
-        System.out.println("\nAğı Eğit ve Tekli Test (Momentumlu) seçildi...");
+        System.out.println("\nAgi Egit ve Tekli Test (Momentumlu) secildi...");
         nnProcess.trainAndSingleTest(true, scanner);
     }
 
     private static void performKFoldCrossValidation(NeuralNetworkProcess nnProcess, Scanner scanner) {
-        System.out.print("K değeri girin: ");
+        System.out.print("K degeri girin: ");
         int k = scanner.nextInt();
 
         if (k <= 1) {
-            System.out.println("Hatalı K değeri. Lütfen 1'den büyük bir değer girin.");
+            System.out.println("Hatalı K değeri. Lutfen 1'den buyuk bir deger girin.");
             return;
         }
 
